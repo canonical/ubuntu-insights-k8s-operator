@@ -1,0 +1,98 @@
+# This file configures Charmcraft.
+# See https://juju.is/docs/sdk/charmcraft-config for guidance.
+
+name: ubuntu-insights-server-k8s
+type: charm
+title: Ubuntu Insights Server K8s
+summary: Charm for Ubuntu Insights server components on Kubernetes.
+
+description: |
+  A Juju charm for deploying and managing the Ubuntu Insights server components on Kubernetes.
+
+  This charm include two main service. A web-exposed service used for accepting HTTP requests with insights report payloads from clients, as well as an ingest service for validating accepted reports, and inserting them into a PostgreSQL database.
+
+  This charm is part of the Ubuntu Insights project, a transparent, user-friendly, open, platform-agnostic, and cross-application solution for reporting hardware information and other collected metrics.
+
+links:
+  source:
+    - https://github.com/canonical/ubuntu-insights-k8s-operator
+    - https://github.com/ubuntu/ubuntu-insights
+
+base: ubuntu@24.04
+platforms:
+  amd64:
+
+assumes:
+  - juju >= 3.1
+  - k8s-api
+
+charm-libs:
+  - lib: data_platform_libs.data_interfaces
+    version: "0"
+
+parts:
+  charm:
+    plugin: uv
+    source: .
+    build-snaps:
+      - astral-uv
+
+config:
+  options:
+    # Web service configuration
+    web-port:
+      type: int
+      default: 8080
+      description: The port on which the web service will listen for HTTP requests.
+    web-host:
+      type: string
+      default: ""
+      description: The host on which the web service will listen for HTTP requests.
+    web-apps:
+      type: string
+      default: "linux, windows, darwin, wsl_setup, ubuntu_desktop_provision"
+      description: Comma-separated list of applications for which the web service will accept reports.
+
+    web-legacy:
+      type: boolean
+      default: true
+      description: Whether the web service should accept legacy reports from older clients such as Ubuntu Report. If true, a preset list of applications will be appended to apps list for the web service.
+
+    # Ingest service configuration
+    ingest-apps:
+      type: string
+      default: "linux, windows, darwin, wsl_setup, ubuntu_desktop_provision"
+      description: Comma-separated list of applications for which the service will accept reports.
+
+    ingest-legacy:
+      type: boolean
+      default: true
+      description: Whether the ingest service should accept legacy reports from older clients such as Ubuntu Report. If true, a preset list of applications will be appended to apps list for the ingest service.
+
+    migrate:
+      type: boolean
+      default: true
+      description: Whenever or not to run database migrations on startup using the migration scripts prepackaged with the image.
+
+requires:
+  database:
+    interface: postgresql_client
+    limit: 1
+
+storage:
+  reports-cache:
+    type: filesystem
+    location: /var/lib/ubuntu-insights/
+    read-only: false
+
+containers:
+  ubuntu-insights-server:
+    resource: ubuntu-insights-server-image
+    mounts:
+      - storage: reports-cache
+        location: /var/lib/ubuntu-insights/
+
+resources:
+  ubuntu-insights-server-image:
+    type: oci-image
+    description: The Ubuntu Insights server services OCI image.
