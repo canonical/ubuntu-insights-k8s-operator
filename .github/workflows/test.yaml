@@ -10,7 +10,7 @@ on:
 
 jobs:
   tox-test:
-    runs-on: ubuntu-22.04 # Use Ubuntu 22.04 for the test environment as it is what is expected for deployment
+    runs-on: ubuntu-24.04 # Use Ubuntu 22.04 for the test environment as it is what is expected for deployment
     steps:
       - name: Checkout
         uses: actions/checkout@v4
