@@ -7,6 +7,7 @@ import logging
 import jubilant
 import requests
 
+from charm import INGEST_PROMETHEUS_PORT, WEB_PROMETHEUS_PORT
 from tests.integration.helpers import ExampleReport
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,18 @@ def test_active(juju: jubilant.Juju, app: str):
     status = juju.status()
     assert status.apps[app].units[app + "/0"].is_active
     assert status.apps[app].units[app + "/1"].is_active
+
+
+def test_prom_responds(juju: jubilant.Juju, app: str):
+    """Test that the Prometheus metrics endpoints respond with 200."""
+    status = juju.status()
+    app_ip = status.apps[app].address
+
+    response_web = requests.get(f"http://{app_ip}:{WEB_PROMETHEUS_PORT}/metrics")
+    assert response_web.status_code == 200
+
+    response_ingest = requests.get(f"http://{app_ip}:{INGEST_PROMETHEUS_PORT}/metrics")
+    assert response_ingest.status_code == 200
 
 
 def test_web_service_running(insights_address: str, requests_timeout: float):
