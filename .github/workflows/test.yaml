@@ -33,7 +33,7 @@ jobs:
           tox
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tests-${{ github.job }}-artifacts-${{ github.run_attempt }}
           path: coverage.xml
