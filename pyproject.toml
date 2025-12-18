@@ -4,11 +4,11 @@ dynamic = ["version"]
 requires-python = ">=3.10"
 
 # Required group: these are all dependencies required to run the charm.
-dependencies = ["ops~=3.0", "requests", "cosl~=1.3"]
+dependencies = ["ops==3.4.0", "requests==2.32.5", "cosl==1.4.0"]
 
 # Required group: these are all dependencies required to run all the charm's tests.
 [dependency-groups]
-test = ["ops[testing]", "jubilant~=1.0", "pytest", "coverage[toml]"]
+test = ["ops[testing]", "jubilant==1.6.2", "pytest", "coverage[toml]"]
 
 # Testing tools configuration
 [tool.coverage.run]
