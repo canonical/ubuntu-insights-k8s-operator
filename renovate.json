@@ -5,5 +5,39 @@
         ":semanticCommitTypeAll(deps)"
     ],
     "semanticCommits": "enabled",
-    "semanticCommitScope": "{{manager}}"
+    "semanticCommitScope": "{{manager}}",
+    "packageRules": [
+        {
+            "enabled": true,
+            "matchDatasources": [
+                "github-tags"
+            ]
+        },
+        {
+            "enabled": false,
+            "matchFiles": [
+                "rockcraft.yaml"
+            ],
+            "matchUpdateTypes": [
+                "major",
+                "minor",
+                "patch"
+            ]
+        }
+    ],
+    "regexManagers": [
+        {
+            "datasourceTemplate": "github-tags",
+            "depNameTemplate": "ubuntu/ubuntu-insights",
+            "description": "Update Ubuntu Insights source",
+            "fileMatch": [
+                "(^|/)rockcraft.yaml$"
+            ],
+            "matchStrings": [
+                "source:.*ubuntu/ubuntu-insights\\.git.*\\n.*source-tag: (?<currentValue>.+)"
+            ],
+            "matchStringsStrategy": "any",
+            "versioningTemplate": "regex:^server/v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+        }
+    ]
 }
