@@ -35,7 +35,7 @@ jobs:
           tox -e unit
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: tics-${{ github.job }}-artifacts-${{ github.run_attempt }}
           path: coverage.xml
@@ -60,7 +60,7 @@ jobs:
           echo "PATH=$PATH" >> "$GITHUB_ENV"
 
       - name: Download coverage artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           merge-multiple: true # There is only one artifact, but this removes the subfolder
 
