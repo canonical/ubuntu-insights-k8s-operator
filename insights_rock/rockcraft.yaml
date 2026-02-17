@@ -2,7 +2,7 @@ name: ubuntu-insights-server
 
 base: bare
 build-base: ubuntu@24.04
-version: "0.8.0"
+version: "0.9.2"
 license: GPL-3.0
 summary: Service for ubuntu-insights
 description: |
@@ -18,12 +18,12 @@ parts:
     web-service:
         plugin: go
         source: https://github.com/ubuntu/ubuntu-insights.git
-        source-tag: server/v0.8.0
+        source-tag: server/v0.9.2
         source-subdir: server/cmd/web-service
         stage-packages:
             - base-files
         build-snaps:
-            - go/1.24/stable
+            - go/1.25/stable
         build-environment:
             - GOTOOLCHAIN: local
         override-build: |
@@ -40,12 +40,12 @@ parts:
     ingest-service:
         plugin: go
         source: https://github.com/ubuntu/ubuntu-insights.git
-        source-tag: server/v0.8.0
+        source-tag: server/v0.9.2
         source-subdir: server/cmd/ingest-service
         stage-packages:
             - base-files
         build-snaps:
-            - go/1.24/stable
+            - go/1.25/stable
         build-environment:
             - GOTOOLCHAIN: local
         override-build: |
@@ -62,7 +62,7 @@ parts:
     migrations:
         plugin: dump
         source: https://github.com/ubuntu/ubuntu-insights.git
-        source-tag: server/v0.8.0
+        source-tag: server/v0.9.2
         source-subdir: server/migrations
         organize:
             "*": usr/share/insights/migrations/
