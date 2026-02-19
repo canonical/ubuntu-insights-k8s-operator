@@ -8,7 +8,7 @@ dependencies = ["ops==3.5.2", "requests==2.32.5", "cosl==1.4.0"]
 
 # Required group: these are all dependencies required to run all the charm's tests.
 [dependency-groups]
-test = ["ops[testing]", "jubilant==1.6.2", "pytest", "coverage[toml]"]
+test = ["ops[testing]", "jubilant==1.7.0", "pytest", "coverage[toml]"]
 
 # Testing tools configuration
 [tool.coverage.run]
