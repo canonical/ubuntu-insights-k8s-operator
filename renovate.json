@@ -6,6 +6,9 @@
     ],
     "semanticCommits": "enabled",
     "semanticCommitScope": "{{manager}}",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
     "packageRules": [
         {
             "enabled": true,
