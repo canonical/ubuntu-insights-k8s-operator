@@ -18,7 +18,7 @@
         },
         {
             "enabled": false,
-            "matchFiles": [
+            "matchFileNames": [
                 "rockcraft.yaml"
             ],
             "matchUpdateTypes": [
@@ -28,13 +28,14 @@
             ]
         }
     ],
-    "regexManagers": [
+    "customManagers": [
         {
+            "customType": "regex",
             "datasourceTemplate": "github-tags",
             "depNameTemplate": "ubuntu/ubuntu-insights",
             "description": "Update Ubuntu Insights source",
-            "fileMatch": [
-                "(^|/)rockcraft.yaml$"
+            "managerFilePatterns": [
+                "/(^|/)rockcraft.yaml$/"
             ],
             "matchStrings": [
                 "source:.*ubuntu/ubuntu-insights\\.git.*\\n.*source-tag: (?<currentValue>.+)"
