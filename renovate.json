@@ -17,6 +17,17 @@
             ]
         },
         {
+            "groupName": "ubuntu-insights rockcraft version sync",
+            "groupSlug": "ubuntu-insights-rockcraft-version-sync",
+            "semanticCommitScope": "ubuntu-insights",
+            "matchManagers": [
+                "custom.regex"
+            ],
+            "matchPackageNames": [
+                "ubuntu/ubuntu-insights"
+            ]
+        },
+        {
             "enabled": false,
             "matchFileNames": [
                 "rockcraft.yaml"
@@ -42,6 +53,21 @@
             ],
             "matchStringsStrategy": "any",
             "versioningTemplate": "regex:^server/v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+        },
+        {
+            "customType": "regex",
+            "datasourceTemplate": "github-tags",
+            "depNameTemplate": "ubuntu/ubuntu-insights",
+            "description": "Update rockcraft project version from Ubuntu Insights server tags",
+            "managerFilePatterns": [
+                "/(^|/)rockcraft.yaml$/"
+            ],
+            "matchStrings": [
+                "^version: \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"$"
+            ],
+            "extractVersionTemplate": "^server/v(?<version>\\d+\\.\\d+\\.\\d+)$",
+            "versioningTemplate": "semver",
+            "autoReplaceStringTemplate": "version: \"{{{newVersion}}}\""
         }
     ]
 }
