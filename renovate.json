@@ -63,7 +63,7 @@
                 "/(^|/)rockcraft.yaml$/"
             ],
             "matchStrings": [
-                "^version: \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"$"
+                "(^|\\n)version: \"(?<currentValue>\\d+\\.\\d+\\.\\d+)\""
             ],
             "extractVersionTemplate": "^server/v(?<version>\\d+\\.\\d+\\.\\d+)$",
             "versioningTemplate": "semver",
