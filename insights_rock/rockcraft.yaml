@@ -2,7 +2,7 @@ name: ubuntu-insights-server
 
 base: bare
 build-base: ubuntu@24.04
-version: "0.9.2"
+version: "0.9.5"
 license: GPL-3.0
 summary: Service for ubuntu-insights
 description: |
