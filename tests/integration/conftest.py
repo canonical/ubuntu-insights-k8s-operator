@@ -96,7 +96,6 @@ def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: s
         charm=charm_file,
         app=app_name,
         resources=resources,
-        num_units=2,
     )
 
     # Wait for PostgreSQL to be ready
