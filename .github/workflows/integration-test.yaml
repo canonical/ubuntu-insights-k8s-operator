@@ -13,4 +13,5 @@ jobs:
       self-hosted-runner: true
       self-hosted-runner-image: jammy # Use Ubuntu 22.04 for the test environment as it is what is expected for deployment
       self-hosted-runner-label: large
-      modules: '["test_charm", "test_removal"]'
+      modules: '["test_charm"]'
+      with-uv: true

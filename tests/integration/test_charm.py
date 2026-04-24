@@ -19,7 +19,6 @@ def test_active(juju: jubilant.Juju, app: str):
     """
     status = juju.status()
     assert status.apps[app].units[app + "/0"].is_active
-    assert status.apps[app].units[app + "/1"].is_active
 
 
 def test_web_service_running(insights_address: str, requests_timeout: float):

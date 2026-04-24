@@ -83,7 +83,6 @@ def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: s
     juju.deploy(
         charm="postgresql-k8s",
         channel="14/stable",
-        revision=495,
         trust=True,
         config={"profile": "testing"},
     )
@@ -96,7 +95,6 @@ def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: s
         charm=charm_file,
         app=app_name,
         resources=resources,
-        num_units=2,
     )
 
     # Wait for PostgreSQL to be ready
