@@ -17,6 +17,9 @@ jobs:
   update-lib:
     name: Check charm libraries
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     defaults:
       run:
         shell: bash --noprofile --norc -euo pipefail {0}
