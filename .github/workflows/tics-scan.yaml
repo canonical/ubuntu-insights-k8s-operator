@@ -70,7 +70,7 @@ jobs:
           mv coverage.xml coverage/Cobertura.xml
 
       - name: "TiCS"
-        uses: tiobe/tics-github-action@v3
+        uses: tiobe/tics-github-action@v4
         with:
           mode: qserver
           project: ubuntu-insights-k8s-operator
