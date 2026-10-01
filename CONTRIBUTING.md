@@ -118,8 +118,8 @@ The test suite must pass before merging the PR to our main branch. Any new featu
 
 There are some pre-configured environments that can be used for linting and formatting code when you're preparing contributions to the charm:
 
-- `tox`: Executes all the basic checks and tests (`lint`, `unit`, and `static`).
-- `tox -e fmt`: Runs formatting using `ruff`.
+- `tox`: Executes all the basic checks and tests (`lint`, `unit`, `static`, and `coverage-report`).
+- `tox -e format`: Runs formatting using `ruff`.
 - `tox -e lint`: Runs a range of static code analysis to check the code.
 - `tox -e static`: Runs other checks such as `pyright`.
 
