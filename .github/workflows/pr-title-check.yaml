@@ -7,6 +7,9 @@ on:
 jobs:
   validate:
     name: Validate PR title
+    if: >-
+      github.event.pull_request.head.ref != 'chore/auto-libs' ||
+      github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     steps:
       - name: Validate PR title
