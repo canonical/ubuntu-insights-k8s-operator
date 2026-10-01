@@ -125,12 +125,42 @@ There are some pre-configured environments that can be used for linting and form
 
 #### Integration Tests
 
-The integration tests require for the OCI image to be registered to a registry.
+Integration tests are driven by [charm-ci](https://github.com/canonical/charm-ci) (`opcli`), using the same flow locally and in CI. The build plan is in `artifacts.yaml`, the test environment in `concierge.yaml`, and the test orchestration in `spread.yaml`.
 
-If you registered the OCI image created by Rockcraft to the MicroK8s registry, use:
+Install `opcli` and its tooling:
 
+```bash
+uv tool install "opcli[cli] @ git+https://github.com/canonical/charm-ci.git@v1.0.1"
+opcli install all
 ```
-tox -e integration -- --ubuntu-insights-server-image=localhost:32000/ubuntu-insights-server:latest
+
+Build the rock and charm (writes `build/artifacts.build.yaml`):
+
+```bash
+opcli artifacts build
+```
+
+Then run the tests either in an isolated LXD VM through spread:
+
+```bash
+opcli spread run
+```
+
+Or directly on the host, which is faster for iteration:
+
+```bash
+opcli env provision
+opcli artifacts push-images --missing-registry deploy
+opcli pytest run
+```
+
+The built charm and rock image are injected into the tests through the `charm_path` and `resource_images` fixtures. To test pre-built artifacts instead, pass them to tox directly:
+
+```bash
+tox -e integration -- \
+  --charm-file ubuntu-insights-server-k8s=./ubuntu-insights-server-k8s_amd64.charm \
+  --resource-image ubuntu-insights-server-image=localhost:32000/ubuntu-insights-server:latest \
+  tests/integration
 ```
 
 ## Contributor License Agreement

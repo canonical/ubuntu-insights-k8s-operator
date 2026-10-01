@@ -1,0 +1,31 @@
+project: ubuntu-insights-k8s-operator
+path: /home/ubuntu/proj
+kill-timeout: 60m
+warn-timeout: 1m
+
+backends:
+  integration-test:
+    type: integration-test
+    systems:
+      # Ubuntu 22.04 is the expected deployment environment.
+      - ubuntu-22.04:
+          cpu: 4
+          memory: 8
+          disk: 30
+
+environment:
+  CONCIERGE: '$(HOST: echo "${CONCIERGE:-concierge.yaml}")'
+  OPCLI_GIT_REF: '$(HOST: echo "${OPCLI_GIT_REF:-v1.0.1}")'
+
+exclude:
+  - .git
+  - .tox
+  - .venv
+  - .*_cache
+
+integration-suites:
+  tests/integration/:
+    summary: integration tests
+    working-dir: ./
+    backends:
+      - integration-test

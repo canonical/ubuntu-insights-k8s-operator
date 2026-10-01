@@ -1,0 +1,16 @@
+version: 1
+rocks:
+  - name: ubuntu-insights-server
+    rockcraft-yaml: insights_rock/rockcraft.yaml
+    platforms:
+      - arch: amd64
+charms:
+  - name: ubuntu-insights-server-k8s
+    charmcraft-yaml: charmcraft.yaml
+    resources:
+      ubuntu-insights-server-image:
+        type: oci-image
+        rock: ubuntu-insights-server
+    platforms:
+      - arch: amd64
+snaps: []

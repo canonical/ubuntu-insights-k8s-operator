@@ -1,5 +1,4 @@
 import logging
-import subprocess
 from pathlib import Path
 from typing import Any, Dict
 
@@ -39,44 +38,13 @@ def juju(request: pytest.FixtureRequest):
         return
 
 
-@pytest.fixture(scope="session")
-def image(metadata: Dict[str, Any], pytestconfig: pytest.Config):
-    """Pytest fixture to return the Ubuntu Insights server image."""
-    image = pytestconfig.getoption("--ubuntu-insights-server-image")
-    if not image:
-        image = metadata["resources"]["ubuntu-insights-server-image"]["upstream-source"]
-    assert image, "Ubuntu Insights server image must be specified"
-    yield image
-
-
-@pytest.fixture(scope="session")
-def charm_file(metadata: Dict[str, Any], pytestconfig: pytest.Config):
-    """Pytest fixture to pack the charm and return the filename, or --charm-file if set."""
-    charm_file = pytestconfig.getoption("--charm-file")
-    if charm_file:
-        yield charm_file
-        return
-
-    try:
-        subprocess.run(["charmcraft", "pack"], check=True, capture_output=True, text=True)
-    except FileNotFoundError:
-        raise OSError("charmcraft command not found. Please install charmcraft.") from None
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Failed to pack charm: {exec}; Stderr: \n{e.stderr}") from None
-
-    app_name = metadata["name"]
-    charm_path = Path(__file__).parent.parent.parent
-    logger.debug(f"Looking for {app_name} .charm file in {charm_path}")
-
-    charms = [p.absolute() for p in charm_path.glob(f"{app_name}*.charm")]
-    assert charms, f"{app_name} .charm file not found in {charm_path}"
-    assert len(charms) == 1, f"{app_name} .charm file not unique, unsure which to use"
-    logger.debug(f"Found charm file: {charms[0]}")
-    yield str(charms[0])
-
-
 @pytest.fixture(scope="module")
-def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: str):
+def app(
+    juju: jubilant.Juju,
+    metadata: Dict[str, Any],
+    charm_path: str,
+    resource_images: Dict[str, str],
+):
     app_name = metadata["name"]
 
     # Deploy postgres
@@ -87,14 +55,10 @@ def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: s
         config={"profile": "testing"},
     )
 
-    resources = {
-        "ubuntu-insights-server-image": image,
-    }
-
     juju.deploy(
-        charm=charm_file,
+        charm=charm_path,
         app=app_name,
-        resources=resources,
+        resources=resource_images,
     )
 
     # Wait for PostgreSQL to be ready
@@ -104,8 +68,9 @@ def app(juju: jubilant.Juju, metadata: Dict[str, Any], charm_file: str, image: s
     )
 
     juju.wait(
-        lambda status: jubilant.all_blocked(status, app_name)
-        and jubilant.all_agents_idle(status, app_name)
+        lambda status: (
+            jubilant.all_blocked(status, app_name) and jubilant.all_agents_idle(status, app_name)
+        )
     )
 
     juju.integrate(app_name, "postgresql-k8s:database")
