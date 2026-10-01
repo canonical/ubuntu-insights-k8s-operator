@@ -1,0 +1,36 @@
+header:
+  license:
+    spdx-id: GPL-3.0-only
+    copyright-owner: Canonical Ltd.
+    content: |
+      Copyright [year] [owner]
+      See LICENSE file for licensing details.
+    pattern: |
+      Copyright \d{4} Canonical Ltd.
+      See LICENSE file for licensing details.
+  paths:
+    - "**"
+  paths-ignore:
+    - ".github/**"
+    - "**/.gitkeep"
+    - "**/*.cfg"
+    - "**/*.conf"
+    - "**/*.json"
+    - "**/*.json.tmpl"
+    - "**/*.md"
+    - "**/*.rst"
+    - "**/*.txt"
+    - ".jujuignore"
+    - ".gitignore"
+    - ".licenserc.yaml"
+    - ".lycheeignore"
+    - ".trivyignore"
+    - "CODEOWNERS"
+    - "LICENSE"
+    - "trivy.yaml"
+    - "pyproject.toml"
+    - "zap_rules.tsv"
+    - "lib/**"
+    - "**/*.md.j2"
+    - "uv.lock"
+  comment: on-failure

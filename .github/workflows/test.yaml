@@ -5,10 +5,20 @@ on:
     branches:
       - main
   pull_request:
+  merge_group:
 
 jobs:
-  tests:
-    name: "Run QA tests"
+  unit-tests:
+    uses: canonical/operator-workflows/.github/workflows/test.yaml@main
+    secrets: inherit
+    permissions:
+      pull-requests: write
+    with:
+      with-uv: true
+
+  codecov:
+    name: "Upload coverage to Codecov"
+    if: github.event_name != 'merge_group'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,9 +38,9 @@ jobs:
         run: |
           uv tool install --python-preference only-managed tox --with tox-uv
 
-      - name: Run tests
+      - name: Generate coverage report
         run: |
-          tox
+          tox -e unit,coverage-report
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v7
