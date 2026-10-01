@@ -159,7 +159,8 @@ The built charm and rock image are injected into the tests through the `charm_pa
 ```bash
 tox -e integration -- \
   --charm-file ubuntu-insights-server-k8s=./ubuntu-insights-server-k8s_amd64.charm \
-  --resource-image ubuntu-insights-server-image=localhost:32000/ubuntu-insights-server:latest
+  --resource-image ubuntu-insights-server-image=localhost:32000/ubuntu-insights-server:latest \
+  tests/integration
 ```
 
 ## Contributor License Agreement
