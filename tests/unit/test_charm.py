@@ -52,7 +52,9 @@ def test_pebble_layer():
         containers={container},
         leader=True,
     )
-    state_out = ctx.run(ctx.on.pebble_ready(container), state_in)
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        state_out = ctx.run(ctx.on.pebble_ready(container), state_in)
+        execute_migrations.assert_called_once()
 
     expected_plan = {
         "services": {
@@ -118,7 +120,9 @@ def test_config_changed():
         },
         leader=True,
     )
-    state_out = ctx.run(ctx.on.config_changed(), state_in)
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        state_out = ctx.run(ctx.on.config_changed(), state_in)
+        execute_migrations.assert_not_called()
     out_command = (
         state_out.get_container(container.name)
         .layers[container.name]

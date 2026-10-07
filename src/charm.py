@@ -179,6 +179,7 @@ class UbuntuInsightsCharm(ops.CharmBase):
         event.add_status(ops.ActiveStatus())
 
     def _on_pebble_ready(self, event: ops.PebbleReadyEvent) -> None:
+        self._execute_migrations()
         self._on_config_changed(event)
 
     def _on_upgrade_charm(self, _: ops.EventBase) -> None:
@@ -198,10 +199,6 @@ class UbuntuInsightsCharm(ops.CharmBase):
         # Write allowlist config files for web and ingest services.
         self._render_allowlist(ServiceType.WEB)
         self._render_allowlist(ServiceType.INGEST)
-
-        # Migrate the database if the database relation is created.
-        if self.config["migrate"]:
-            self._execute_migrations()
 
         # Expose web service port
         self.unit.set_ports(typing.cast(int, self.config["web-port"]))
