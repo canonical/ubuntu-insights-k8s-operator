@@ -16,6 +16,7 @@ header:
     - "**/*.cfg"
     - "**/*.conf"
     - "**/*.json"
+    - "**/*.jsonc"
     - "**/*.json.tmpl"
     - "**/*.md"
     - "**/*.rst"
