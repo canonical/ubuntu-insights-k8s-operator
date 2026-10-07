@@ -85,6 +85,7 @@ class UbuntuInsightsCharm(ops.CharmBase):
 
         self.framework.observe(self.on.start, self._on_pebble_ready)
         self.framework.observe(self.on.upgrade_charm, self._on_upgrade_charm)
+        self.framework.observe(self.on.leader_elected, self._on_leader_elected)
         self.framework.observe(self.on.ubuntu_insights_server_pebble_ready, self._on_pebble_ready)
         self.framework.observe(self.on.config_changed, self._on_config_changed)
         self.framework.observe(self.on.collect_unit_status, self._on_collect_status)
@@ -184,6 +185,10 @@ class UbuntuInsightsCharm(ops.CharmBase):
         """Handle charm upgrade events."""
         assert type(self.restart_manager.name) is str
         self.on[self.restart_manager.name].acquire_lock.emit()
+
+    def _on_leader_elected(self, _: ops.LeaderElectedEvent) -> None:
+        """Retry database migrations when this unit becomes leader."""
+        self._execute_migrations()
 
     def _on_config_changed(self, _: ops.EventBase) -> None:
         """Handle configuration changes."""
@@ -440,6 +445,10 @@ class UbuntuInsightsCharm(ops.CharmBase):
 
     def _execute_migrations(self) -> None:
         """Run database migrations."""
+        if not self.unit.is_leader():
+            logger.debug("Skipping non-leader database migration: %s", self.unit.name)
+            return
+
         if not self._database.is_relation_ready() or not self.container.can_connect():
             logger.info("Not ready to execute migrations.")
             return
