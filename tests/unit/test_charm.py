@@ -6,6 +6,7 @@
 
 import json
 from enum import Enum
+from unittest.mock import patch
 
 import ops
 from ops import testing
@@ -28,6 +29,20 @@ class ServiceType(Enum):
 
 
 REPORTS_CACHE_MOUNT_LOCATION = "/var/lib/ubuntu-insights/"
+
+
+def test_leader_elected_triggers_migrations():
+    ctx = testing.Context(UbuntuInsightsCharm)
+    container = testing.Container(name=CONTAINER_NAME)
+    restart_relation = testing.PeerRelation(endpoint="restart")
+
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        ctx.run(
+            ctx.on.leader_elected(),
+            testing.State(containers={container}, relations={restart_relation}, leader=True),
+        )
+
+    execute_migrations.assert_called_once()
 
 
 def test_pebble_layer():
