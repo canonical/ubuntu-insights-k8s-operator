@@ -84,11 +84,6 @@ config:
       default: ""
       type: string
 
-    migrate:
-      type: boolean
-      default: true
-      description: Whenever or not to run database migrations on startup using the migration scripts prepackaged with the image.
-
     debug:
       type: boolean
       default: false
