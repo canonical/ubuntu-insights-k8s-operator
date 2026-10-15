@@ -195,37 +195,35 @@ def test_config_changed(
     juju.config(app, {"web-apps": "linux"})
 
     juju.wait(
-        lambda status: requests.post(
-            f"{insights_address}/upload/windows",
-            json=ExampleReport.OPT_OUT.value,
-            timeout=requests_timeout,
-        ).status_code
-        == 403
-        and jubilant.all_active(status, app)
+        lambda status: (
+            requests.post(
+                f"{insights_address}/upload/windows",
+                json=ExampleReport.OPT_OUT.value,
+                timeout=requests_timeout,
+            ).status_code
+            == 403
+            and jubilant.all_active(status, app)
+        )
     )
 
 
 def test_upgrade(
     app: str,
     juju: jubilant.Juju,
-    charm_file: str,
-    image: str,
+    charm_path: str,
+    resource_images: dict[str, str],
     insights_address: str,
     requests_timeout: float,
 ):
     juju.add_unit(app)
     juju.wait(jubilant.all_active)
 
-    resources = {
-        "ubuntu-insights-server-image": image,
-    }
-
     def ping_web_service():
         response = requests.get(f"{insights_address}/version", timeout=requests_timeout)
         return response.status_code == 200
 
     assert ping_web_service()
-    juju.refresh(app, path=charm_file, resources=resources)
+    juju.refresh(app, path=charm_path, resources=resource_images)
 
     juju.wait(
         lambda status: jubilant.all_agents_idle(status, app) and jubilant.all_active(status, app),

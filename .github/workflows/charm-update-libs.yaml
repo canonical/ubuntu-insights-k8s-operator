@@ -1,99 +1,14 @@
-name: Update Charm Libraries
+name: Auto-update charm libraries
+
 on:
   schedule:
-    # Weekly on Monday at 09:00 UTC
-    - cron: "0 9 * * 1"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  pull-requests: write
-
-env:
-  GIT_BRANCH: "auto/charm-libs"
-  CHARMCRAFT_CHANNEL: "latest/stable"
+    - cron: "0 1 * * *"
 
 jobs:
-  update-lib:
-    name: Check charm libraries
-    runs-on: ubuntu-latest
+  auto-update-libs:
+    uses: canonical/operator-workflows/.github/workflows/auto_update_charm_libs.yaml@main
+    secrets: inherit
     permissions:
+      id-token: write
       contents: write
       pull-requests: write
-    defaults:
-      run:
-        shell: bash --noprofile --norc -euo pipefail {0}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-        with:
-          ref: main
-
-      - name: Install charmcraft
-        run: |
-          sudo snap install charmcraft --classic --channel "${{ env.CHARMCRAFT_CHANNEL }}"
-
-      - name: Fetch charm libraries
-        id: fetch-libs
-        run: |
-          charmcraft fetch-lib
-
-      - name: Check diff
-        id: check-diff
-        run: |
-          changed_files=$(git diff --name-only && git ls-files --others --exclude-standard)
-
-          invalid_files=""
-          updated_libs=""
-
-          # Ensure only files in lib/charms/ are modified
-          for file in $changed_files; do
-            if [[ "$file" == "lib/charms/"* ]]; then
-              # File matches the pattern for charm libraries
-              updated_libs+="$file"$'\n'
-            else
-              # File does not match the pattern
-              invalid_files+="$file"$'\n'
-              echo "::error file=$(realpath "$file"),title=Unexpected-Diff::The file '$file' was modified, but it is not a charm library file."
-            fi
-          done
-
-          # Abort if invalid files were changed
-          if [[ -n "$invalid_files" ]]; then
-            exit 1
-          fi
-
-          # Create a multi-line output: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#multiline-strings
-          {
-            printf 'updated_libs<<EOF\n'
-            printf '%s' "$updated_libs"
-            printf 'EOF\n'
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Create a PR for local changes
-        uses: peter-evans/create-pull-request@v8
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "deps(lib/charms): Update charm libraries"
-          title: "deps(lib/charms): Update charm libraries"
-          body: |
-            This is an automated pull request to fetch the latest charm libraries dependencies.
-
-            <details>
-              <summary>Updated Libraries</summary>
-
-              ```markdown
-              ${{ steps.check-diff.outputs.updated_libs }}
-              ```
-
-            </details>
-
-            Please do not modify the branch ${{ env.GIT_BRANCH }} directly. This branch is managed by an automated workflow.
-
-            Created by [workflow run #${{ github.run_id }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          labels: dependencies
-          add-paths: |
-            lib/charms/**
-          sign-commits: true
-          branch: "${{ env.GIT_BRANCH }}"
-          delete-branch: true
