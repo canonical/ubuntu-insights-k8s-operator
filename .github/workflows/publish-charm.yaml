@@ -7,7 +7,7 @@ on:
 
 jobs:
   publish-to-edge:
-    uses: canonical/charm-ci/.github/workflows/publish-artifacts.yml@v1.0.1
+    uses: canonical/charm-ci/.github/workflows/publish-artifacts.yml@v1.0.2
     secrets:
       CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
     permissions:
