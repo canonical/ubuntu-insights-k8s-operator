@@ -7,6 +7,7 @@
     "semanticCommits": "enabled",
     "semanticCommitScope": "{{manager}}",
     "minimumReleaseAge": "7 days", // Security updates ignore this restriction
+    "automerge": true,
     "lockFileMaintenance": {
         "enabled": true
     },
