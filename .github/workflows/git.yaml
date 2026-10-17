@@ -2,7 +2,6 @@ name: Git Checks
 
 on:
   pull_request:
-  merge_group:
 
 jobs:
   block-fixup:
