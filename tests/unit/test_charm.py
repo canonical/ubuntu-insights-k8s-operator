@@ -6,6 +6,7 @@
 
 import json
 from enum import Enum
+from unittest.mock import patch
 
 import ops
 from ops import testing
@@ -30,6 +31,20 @@ class ServiceType(Enum):
 REPORTS_CACHE_MOUNT_LOCATION = "/var/lib/ubuntu-insights/"
 
 
+def test_leader_elected_triggers_migrations():
+    ctx = testing.Context(UbuntuInsightsCharm)
+    container = testing.Container(name=CONTAINER_NAME)
+    restart_relation = testing.PeerRelation(endpoint="restart")
+
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        ctx.run(
+            ctx.on.leader_elected(),
+            testing.State(containers={container}, relations={restart_relation}, leader=True),
+        )
+
+    execute_migrations.assert_called_once()
+
+
 def test_pebble_layer():
     ctx = testing.Context(UbuntuInsightsCharm)
     container = testing.Container(name=CONTAINER_NAME, can_connect=True)
@@ -37,7 +52,9 @@ def test_pebble_layer():
         containers={container},
         leader=True,
     )
-    state_out = ctx.run(ctx.on.pebble_ready(container), state_in)
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        state_out = ctx.run(ctx.on.pebble_ready(container), state_in)
+        execute_migrations.assert_called_once()
 
     expected_plan = {
         "services": {
@@ -103,7 +120,9 @@ def test_config_changed():
         },
         leader=True,
     )
-    state_out = ctx.run(ctx.on.config_changed(), state_in)
+    with patch.object(UbuntuInsightsCharm, "_execute_migrations") as execute_migrations:
+        state_out = ctx.run(ctx.on.config_changed(), state_in)
+        execute_migrations.assert_not_called()
     out_command = (
         state_out.get_container(container.name)
         .layers[container.name]
