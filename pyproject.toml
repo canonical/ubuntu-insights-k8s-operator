@@ -10,6 +10,12 @@ dependencies = ["ops==3.9.0", "requests==2.34.2", "cosl==1.11.3"]
 [dependency-groups]
 test = ["ops[testing]", "jubilant==1.14.0", "pytest", "coverage[toml]"]
 
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+exclude-newer = "7 days"
+
 # Testing tools configuration
 [tool.coverage.run]
 branch = true
