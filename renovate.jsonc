@@ -27,7 +27,8 @@
             ],
             "matchPackageNames": [
                 "ubuntu/ubuntu-insights"
-            ]
+            ],
+            "minimumReleaseAge": null
         },
         {
             "enabled": false,
